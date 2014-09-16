@@ -25,7 +25,7 @@ class Session:
                                    )[1 if date_return or is_open else 0].check()
         for city, i in [(city_from, 1), (city_to, 2)]:
             self.browser.find_by_css('input[tabindex="{}"]'.format(i)) \
-                        .first.type(city, slowly=True)
+                        .first.fill(city)
             for item in self.browser.find_by_css('.ui-menu-item'):
                 link = item.find_by_tag('a')
                 if link.value == city:
