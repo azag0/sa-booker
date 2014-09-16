@@ -15,6 +15,9 @@ import docopt
 from schema import Schema, And, Or, Use, SchemaError
 import studentagency as sa
 
+def now():
+   return datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
 def main(args=None):
    args = docopt.docopt(__doc__, args)
    browsers = ['chrome', 'firefox']
@@ -25,6 +28,7 @@ def main(args=None):
    args = args_schema.validate(args) 
    logging.basicConfig(level=logging.INFO)
    log = logging.getLogger(__name__)
+   log.info(now())
    try:
       with open('users.yaml') as f:
          users = yaml.load(f)
@@ -50,8 +54,7 @@ def main(args=None):
                       s.order_seat(seats.popitem()[1])
                       s.go_search()
                       task.finished = True
-                      now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                      log.info('Booked! Time: {}'.format(now))
+                      log.info('Booked! Time: {}'.format(now()))
                       log.info(task)
             except: 
                raise
@@ -69,6 +72,7 @@ def main(args=None):
    finally:
       for s in sessions.values():
          s.browser.quit()
+      log.info(now())
 
 if __name__ == '__main__':
     sys.exit(main())
