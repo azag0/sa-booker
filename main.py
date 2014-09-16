@@ -39,13 +39,16 @@ def main(args=None):
                                                          users[res['account']])
                s = sessions[res['account']]
                connections = s.search(res['from'], res['to'], res['date'])
-               if res['time'] in connections:
-                  seats = s.order_time(connections[res['time']])
-                  s.order_seat(seats.popitem()[1])
-                  del zarezervuj[zarezervuj.index(res)]
-                  s.go_search()
-                  log.info('Booked!')
-                  log.info(yaml.dump(res, encoding='utf-8'))
+               #TODO make connection class
+               for bus_time, bus_type, bus_button in connections:
+                   if res['time'] == bus_time and \
+                           (res['posila'] or bus_type != 'posila'):
+                      seats = s.order_time(bus_button)
+                      s.order_seat(seats.popitem()[1])
+                      del zarezervuj[zarezervuj.index(res)]
+                      s.go_search()
+                      log.info('Booked!')
+                      log.info(yaml.dump(res, encoding='utf-8'))
             except: 
                 pass
          if len(zarezervuj) == 0:

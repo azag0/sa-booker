@@ -43,7 +43,7 @@ class Session:
             pass
         items = self.browser.find_by_css('.left_column') \
                             .find_by_xpath('div/div/*')
-        time_table = {}
+        time_table = []
         for item in items:
             if item.tag_name == 'h2':
                 date = item.text.split(' ')[1]
@@ -52,8 +52,18 @@ class Session:
                 if date != date:
                     break
                 info = [c.value for c in item.find_by_xpath('div') if c.value]
+                bus_type = item.find_by_css('.col_icons2').first \
+                               .find_by_xpath('a/img')
+                if not bus_type:
+                    bus_type = 'standard'
+                else:
+                    bus_type = bus_type.first._element.get_attribute("alt")
+                    if 'Fun a Relax' in bus_type:
+                        bus_type = 'fun&relax'
+                    elif 'Ekonomy standard' in bus_type:
+                        bus_type = 'posila'
                 if int(info[3]):
-                    time_table[info[0]] = item.find_by_css('.col_price')
+                    time_table.append((info[0], bus_type, item.find_by_css('.col_price')))
         return time_table
     def order_time(self, connection):
         while True:
