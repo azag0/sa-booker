@@ -28,7 +28,7 @@ class Session:
                         .first.fill(city)
             for item in self.browser.find_by_css('.ui-menu-item'):
                 link = item.find_by_tag('a')
-                if link.value == city:
+                if link.value.lower() == city.lower():
                     link.click()
                     break
         self.browser.fill('departure:dateField', date)
