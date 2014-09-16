@@ -29,29 +29,29 @@ def main(args=None):
       with open('users.yaml') as f:
          users = yaml.load(f)
       with open('data.yaml') as f:
-         zarezervuj = yaml.load(f)
+         tasks = [sa.Task(t) for t in yaml.load(f)]
       sessions = {}
       while True:
-         for res in zarezervuj:
+         for task in tasks:
             try:
-               if not res['account'] in sessions:
-                  sessions[res['account']] = sa.Session(args['--browser'],
-                                                         users[res['account']])
-               s = sessions[res['account']]
-               connections = s.search(res['from'], res['to'], res['date'])
-               #TODO make connection class
-               for bus_time, bus_type, bus_button in connections:
-                   if res['time'] == bus_time and \
-                           (res['posila'] or bus_type != 'posila'):
-                      seats = s.order_time(bus_button)
+               if not task.account in sessions:
+                  sessions[task.account] = sa.Session(args['--browser'],
+                                                      users[task.account])
+                  log.info('Session for account {} created'.format(task.account))
+               s = sessions[task.account]
+               connections = s.search(task)
+               for conn in connections:
+                   if conn.is_free() and task.match_connection(conn):
+                      seats = s.order_time(conn)
                       s.order_seat(seats.popitem()[1])
-                      del zarezervuj[zarezervuj.index(res)]
                       s.go_search()
                       log.info('Booked!')
-                      log.info(yaml.dump(res, encoding='utf-8'))
+                      task.finished = True
+                      log.info(task)
             except: 
                 pass
-         if len(zarezervuj) == 0:
+         tasks = [t for t in tasks if not t.finished]
+         if not tasks:
             log.info('All tickets booked, exiting')
             return 0
          time.sleep(15)
