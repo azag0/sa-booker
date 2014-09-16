@@ -28,8 +28,12 @@ def main(args=None):
    try:
       with open('users.yaml') as f:
          users = yaml.load(f)
+      log.info('Loaded users: ' + ', '.join(users.keys()))
       with open('data.yaml') as f:
          tasks = [sa.Task(t) for t in yaml.load(f)]
+      log.info('Loaded tasks:')
+      for t in tasks:
+         log.info(t)
       sessions = {}
       while True:
          for task in tasks:
@@ -45,8 +49,9 @@ def main(args=None):
                       seats = s.order_time(conn)
                       s.order_seat(seats.popitem()[1])
                       s.go_search()
-                      log.info('Booked!')
                       task.finished = True
+                      now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                      log.info('Booked! Time: {}'.format(now))
                       log.info(task)
             except: 
                 pass
