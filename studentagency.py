@@ -46,10 +46,10 @@ class Session:
         time_table = []
         for item in items:
             if item.tag_name == 'h2':
-                date = item.text.split(' ')[1]
+                date_local = item.text.split(' ')[1]
             elif item.tag_name == 'div' and item.has_class('routeSummary'):
-                assert date
-                if date != date:
+                assert date_local
+                if date_local != date:
                     break
                 info = [c.value for c in item.find_by_xpath('div') if c.value]
                 bus_type = item.find_by_css('.col_icons2').first \
