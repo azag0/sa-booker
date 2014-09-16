@@ -54,7 +54,7 @@ def main(args=None):
                       log.info('Booked! Time: {}'.format(now))
                       log.info(task)
             except: 
-                pass
+               raise
          tasks = [t for t in tasks if not t.finished]
          if not tasks:
             log.info('All tickets booked, exiting')
