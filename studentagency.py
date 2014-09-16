@@ -87,11 +87,9 @@ class Session:
             self.browser.check('returnTicketOpen')
         self.browser.find_option_by_text(u'Isic/Alive').first.check()
         self.browser.find_by_value('Vyhledat').first.click()
-        while self.browser.is_element_not_present_by_css('.left_column', 
-                                                         wait_time=1):
+        while self.browser.is_element_not_present_by_css('.left_column', wait_time=1):
             pass
-        items = self.browser.find_by_css('.left_column') \
-                            .find_by_xpath('div/div/*')
+        items = self.browser.find_by_css('.left_column').find_by_xpath('div/div/*')
         connections = []
         for item in items:
             if item.tag_name == 'h2':
