@@ -117,7 +117,10 @@ class Session:
             for seat in bus.first.find_by_xpath('div[@class="seatContainer"]'):
                 seats[int(seat.find_by_tag('div').first.html[:-1])] = seat
         else:
-            raise Exception()
+            bus = self.browser.find_by_css('.vehicle')
+            for seat in bus.first.find_by_css('.free') + \
+                        bus.first.find_by_css('.selected'):
+                seats[int(seat.text[:-1])] = seat
         return seats
     def order_seat(self, seat):
         seat.click()
