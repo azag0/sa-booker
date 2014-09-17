@@ -49,13 +49,13 @@ def main(args=None):
          log.info(t)
       sessions = {}
       log_interval = 600
-      last_log_time = time.clock()-log_interval
+      last_log_time = time.time()-log_interval
       n_tries = 0
       while True:
-         if time.clock()-last_log_time > log_interval:
+         if time.time()-last_log_time > log_interval:
             log.info('Alive, {} tasks in queue, {} tries '
                      'since last log'.format(len(tasks), n_tries))
-            last_log_time = time.clock()
+            last_log_time = time.time()
             n_tries = 0
          for task in tasks:
             try:
