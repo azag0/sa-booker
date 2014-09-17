@@ -44,6 +44,7 @@ def main(args=None):
          log.info(t)
       sessions = {}
       while True:
+         log.info('Trying {} tasks'.format(len(tasks)))
          for task in tasks:
             try:
                if not task.account in sessions:
