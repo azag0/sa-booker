@@ -15,6 +15,7 @@ import logging
 import docopt
 from schema import Schema, And, Or, Use, SchemaError
 import studentagency as sa
+import time
 
 def main(args=None):
    args = docopt.docopt(__doc__, args)
@@ -43,8 +44,12 @@ def main(args=None):
       for t in tasks:
          log.info(t)
       sessions = {}
+      log_interval = 600
+      last_log_time = time.clock()-log_interval
       while True:
-         log.info('Trying {} tasks'.format(len(tasks)))
+         if time.clock()-last_log_time > log_interval:
+            log.info('Alive, {} tasks in queue'.format(len(tasks)))
+            last_log_time = time.clock()
          for task in tasks:
             try:
                if not task.account in sessions:
