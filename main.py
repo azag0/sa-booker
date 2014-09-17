@@ -53,7 +53,7 @@ def main(args=None):
       n_tries = 0
       while True:
          if time.time()-last_log_time > log_interval:
-            log.info('Alive, {} tasks in queue, {} tries '
+            log.info('Alive, {} tasks in queue, {} attempts '
                      'since last log'.format(len(tasks), n_tries))
             last_log_time = time.time()
             n_tries = 0
