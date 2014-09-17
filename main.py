@@ -54,15 +54,19 @@ def main(args=None):
                s = sessions[task.account]
                connections = s.search(task)
                for conn in connections:
-                   if conn.is_free() and task.match_connection(conn):
-                      seats = s.order_time(conn)
-                      if not seats:
+                  if conn.is_free() and task.match_connection(conn):
+                     log.info('Free connection found!')
+                     log.info(task)
+                     seats = s.order_time(conn)
+                     log.info('Free seats: {}'.format(seats.keys()))
+                     if not seats:
+                        log.warn('Someone overtook you...')
                         break
-                      s.order_seat(seats.popitem()[1])
-                      s.go_search()
-                      task.finished = True
-                      log.warning('Booked!')
-                      log.info(task)
+                     s.order_seat(seats.popitem()[1])
+                     s.go_search()
+                     task.finished = True
+                     log.warning('Booked!')
+                     log.info(task)
             except: 
                raise
          tasks = [t for t in tasks if not t.finished]
