@@ -79,7 +79,7 @@ def main(args=None):
                      s.go_search()
                      task.finished = True
                      log.warning('Booked!')
-                     log.info(task)
+                     last_log_time -= log_interval
             except: 
                raise
             n_tries += 1
