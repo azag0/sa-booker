@@ -16,6 +16,7 @@ import docopt
 from schema import Schema, And, Or, Use, SchemaError
 import studentagency as sa
 import time
+import signal
 
 def main(args=None):
    args = docopt.docopt(__doc__, args)
@@ -28,6 +29,9 @@ def main(args=None):
                    str),
        str: object})
    args = args_schema.validate(args) 
+   def sigterm_handler(signal, frame):
+      raise KeyboardInterrupt()
+   signal.signal(signal.SIGTERM, sigterm_handler)
    logging.basicConfig(level=logging.INFO,
                        format='%(levelname)s: %(asctime)s: %(message)s',
                        filename=args['--log'],
