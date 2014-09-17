@@ -33,7 +33,7 @@ def main(args=None):
       raise KeyboardInterrupt()
    signal.signal(signal.SIGTERM, sigterm_handler)
    logging.basicConfig(level=logging.INFO,
-                       format='%(levelname)s: %(asctime)s: %(message)s',
+                       format='%(asctime)s: %(levelname)s: %(message)s',
                        filename=args['--log'],
                        datefmt='%y-%m-%d %H:%M:%S')
    log = logging.getLogger(__name__)
