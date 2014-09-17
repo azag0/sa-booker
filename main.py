@@ -56,6 +56,8 @@ def main(args=None):
                for conn in connections:
                    if conn.is_free() and task.match_connection(conn):
                       seats = s.order_time(conn)
+                      if not seats:
+                        break
                       s.order_seat(seats.popitem()[1])
                       s.go_search()
                       task.finished = True
