@@ -122,7 +122,8 @@ class Session:
                 seats[int(seat.text[:-1])] = seat
         return seats
     def order_seat(self, seat):
-        seat.click()
+        if not seat.has_class('selected'):
+            seat.click()
         submit = self.browser.find_by_css('[name^=buttonContainer]').first
         interaction_type = submit.text
         if not u'Rezervovat' in interaction_type:
