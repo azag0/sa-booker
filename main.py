@@ -73,6 +73,7 @@ def main(args=None):
                      log.info('Free seats: {}'.format(seats.keys()))
                      if not seats:
                         log.warn('Someone overtook you...')
+                        s.go_search()
                         break
                      s.order_seat(seats.popitem()[1])
                      s.go_search()
