@@ -114,12 +114,11 @@ class Session:
         seats = {}
         bus = self.browser.find_by_css('.seatsContainer')
         if bus:
-            for seat in bus.first.find_by_xpath('div[@class="seatContainer"]'):
+            for seat in bus.first.find_by_css('.seatContainer:not([style*=blocked])'):
                 seats[int(seat.find_by_tag('div').first.html[:-1])] = seat
         else:
             bus = self.browser.find_by_css('.vehicle')
-            for seat in bus.first.find_by_css('.free') + \
-                        bus.first.find_by_css('.selected'):
+            for seat in bus.first.find_by_css('.free, .selected'):
                 seats[int(seat.text[:-1])] = seat
         return seats
     def order_seat(self, seat):
