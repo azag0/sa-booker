@@ -46,10 +46,13 @@ def main(args=None):
       sessions = {}
       log_interval = 600
       last_log_time = time.clock()-log_interval
+      n_tries = 0
       while True:
          if time.clock()-last_log_time > log_interval:
-            log.info('Alive, {} tasks in queue'.format(len(tasks)))
+            log.info('Alive, {} tasks in queue, {} tries '
+                     'since last log'.format(len(tasks), n_tries))
             last_log_time = time.clock()
+            n_tries = 0
          for task in tasks:
             try:
                if not task.account in sessions:
@@ -74,6 +77,7 @@ def main(args=None):
                      log.info(task)
             except: 
                raise
+            n_tries += 1
          tasks = [t for t in tasks if not t.finished]
          if not tasks:
             log.info('All tickets booked, exiting')
