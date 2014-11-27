@@ -37,8 +37,8 @@ class Connection:
         self.departure = info[0]
         self.arrival = info[1]
         self._free = 0 if info[3] == "-" else int(info[3])
-        self.price = float(re.match(r'(\d+) CZK', info[4]).group(1)) \
-                       if self.is_free() else None
+        self.price = re.match(r'(.*) CZK', info[4]).group(1) \
+            if self.is_free() else None
         icons = html_elem.find_by_css('.col_icons2').first \
                          .find_by_xpath('a/img')
         if not icons:
