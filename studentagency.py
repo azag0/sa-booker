@@ -148,11 +148,13 @@ class Session:
                         time.sleep(1)
         submit = self.browser.find_by_css('[name^=buttonContainer]').first
         interaction_type = submit.text
-        if not u'Rezervovat' in interaction_type:
+        reserved = u'Rezervovat' in interaction_type
+        if not reserved:
             submit.click()
-            data = (self.user['first'], 
-                    self.user['last'], 
-                    self.user['email'], 
+            time.sleep(1)
+            data = (self.user['first'],
+                    self.user['last'],
+                    self.user['email'],
                     self.user['phone'])
             for item, value in zip(self.browser.find_by_id('passengerInfo')
                                                .first.find_by_tag('input'),
@@ -160,7 +162,7 @@ class Session:
                 item.fill(value)
             submit = self.browser.find_by_css('[name^=buttonContainer]').first
             interaction_type = submit.text
-        assert u'Rezervovat' in interaction_type
+            assert u'Rezervovat' in interaction_type
         time.sleep(1)
         submit.click()
         if os.path.exists('email.yaml'):
