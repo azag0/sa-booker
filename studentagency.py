@@ -139,6 +139,13 @@ class Session:
     def order_seat(self, seat):
         if not seat.has_class('selected'):
             seat.click()
+        for fs in self.browser.find_by_css('fieldset.topRoute'):
+            legend = fs.find_by_css('legend')
+            if legend and u'Pojištění' in legend[0].text:
+                for package in fs.find_by_css('.insurancePackageType'):
+                    if u'nechci' in package.find_by_tag('label').text:
+                        package.find_by_tag('input').click()
+                        time.sleep(1)
         submit = self.browser.find_by_css('[name^=buttonContainer]').first
         interaction_type = submit.text
         if not u'Rezervovat' in interaction_type:
