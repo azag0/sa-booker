@@ -54,13 +54,20 @@ class Connection:
                 log = logging.getLogger(__name__)
                 log.warning('Unknown bus type:')
                 log.warning(alt_text)
-        self._button = html_elem.find_by_css('.col_price')
+            self._html_elem = html_elem
 
     def is_free(self):
         return self._free > 0
 
     def click(self):
-        self._button.click()
+        if self._html_elem.find_by_css('.col_price'):
+            self._html_elem.find_by_css('.col_price').click()
+        else:
+            self._html_elem.find_by_css('.detailButton').click()
+            self._html_elem.parent \
+                .find_by_css('div[style*=block]').first \
+                .find_by_css('.detail_icon').first \
+                .click()
 
 
 class Session:
@@ -114,7 +121,9 @@ class Session:
 
     def order_time(self, connection):
         while True:
-            connection.click()
+            if connection.click():
+                self.browser
+
             dialog = self.browser.find_by_css('[id^=_wicket_window]')
             if dialog:
                 dialog.first.find_by_tag('button').click()
