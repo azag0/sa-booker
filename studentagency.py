@@ -101,7 +101,7 @@ class Session:
             self.browser.fill('returnDeparture:dateField', date_return)
         if is_open:
             self.browser.check('returnTicketOpen')
-        self.browser.find_option_by_text(u'Isic/Alive').first.check()
+        self.browser.find_option_by_text(u'ISIC').first.check()
         self.browser.find_by_value('Vyhledat').first.click()
         while self.browser.is_element_not_present_by_css('.left_column',
                                                          wait_time=1):
