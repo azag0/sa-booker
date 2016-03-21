@@ -1,0 +1,89 @@
+#!/usr/bin/env python3
+'''sabooker — Student Agency automated seat booking service
+
+Usage:
+    sabooker [--browser=BROWSER] [--log=LOG] TICKETS
+
+Options:
+    --browser=BROWSER     Browser to use [default: firefox]
+    --log=LOG             Use a file for logging
+'''
+import sys
+import time
+import yaml
+import logging
+from docopt import docopt
+from SA import Task, Session
+import signal
+
+
+def finalize(sessions):
+    for session in sessions.values():
+        session.browser.quit()
+
+
+def book(tickets, browser, logname):
+    sessions = {}
+
+    def sigterm_handler(signal, frame):
+        finalize(sessions)
+        sys.exit(0)
+
+    signal.signal(signal.SIGTERM, sigterm_handler)
+    logging.basicConfig(level=logging.INFO,
+                        format='%(asctime)s: %(levelname)s: %(message)s',
+                        filename=logname,
+                        datefmt='%y-%m-%d %H:%M:%S')
+    log = logging.getLogger(__name__)
+    log.info('Starting')
+    with open('conf.yaml') as f:
+        conf = yaml.load(f)
+    users = conf['accounts']
+    log.info('Loaded users: ' + ', '.join(users.keys()))
+    tasks = [Task(t) for t in tickets]
+    log.info('Loaded tasks:')
+    for t in tasks:
+        log.info(t)
+    log_interval = 600
+    last_log_time = time.time()-log_interval
+    n_tries = 0
+    while True:
+        if time.time()-last_log_time > log_interval:
+            log.info('Alive, {} tasks in queue, {} attempts '
+                     'since last log'.format(len(tasks), n_tries))
+            last_log_time = time.time()
+            n_tries = 0
+        for task in tasks:
+            if task.account not in sessions:
+                sessions[task.account] = Session(browser, users[task.account])
+                log.info('Session for account {} created'.format(task.account))
+            s = sessions[task.account]
+            connections = s.search(task)
+            for conn in connections:
+                if conn.free and conn in task:
+                    log.info('Free connection found!')
+                    log.info(task)
+                    seats = s.order_time(conn)
+                    log.info('Free seats: {}'.format(seats.keys()))
+                    if not seats:
+                        log.warn('Someone overtook you...')
+                        s.go_search()
+                        break
+                    s.order_seat(seats.popitem()[1])
+                    s.go_search()
+                    task.finished = True
+                    log.warning('Booked!')
+                    last_log_time -= log_interval
+            n_tries += 1
+        tasks = [t for t in tasks if not t.finished]
+        if not tasks:
+            log.info('All tickets booked, exiting')
+            finalize(sessions)
+            return 0
+        time.sleep(15)
+
+
+if __name__ == '__main__':
+    args = docopt(__doc__)
+    assert args['--browser'] in ['chrome', 'firefox']
+    book(yaml.load(open(args['TICKETS'])), args['--browser'], args['--log'])
